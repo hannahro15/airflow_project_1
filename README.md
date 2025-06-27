@@ -16,3 +16,18 @@ uv venv --python 3.12.6 - (or whatever Python version you have installed). If yo
  docker compose up 
 
 6. Wait for the previous step. Click on the port to the right of airflow-apiserver-1 and sign in to airflow using the username and passwords, both with airflow (this is standard I think??). Then you will be signed in to the Airflow UI.
+
+To create a connection to the postgresql database on Airflow:
+
+1. In the Airflow UI, click on admin and then connections.
+2. On the page you are directed to click 'Add connection'.
+3. Then enter the following details on that page:
+    - connection id - postgres
+    - connection type - postgres (in the dropdown)
+    - description -  This is the airflow database
+    - host - postgres
+    - login - airflow
+    - password - airflow
+    - port - 5432
+4. Click save and you should be connected to the postgresql database.
+   
