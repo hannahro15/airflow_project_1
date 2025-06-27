@@ -6,7 +6,7 @@ def user_processing():
     
     create_table = SQLExecuteQueryOperator(
         task_id="create_table",
-        CONN_ID="postgres",
+        conn_id="postgres",
         sql="""
         CREATE TABLE IF NOT EXISTS user (
         id INT PRIMARY KEY,
