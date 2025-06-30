@@ -30,4 +30,13 @@ To create a connection to the postgresql database on Airflow:
     - password - airflow
     - port - 5432
 4. Click save and you should be connected to the postgresql database.
+
+To test each dag is working, run the following in Docker:
+
+1. First click scheduler-1. 
+2. In the terminal, type /bin/bash
+3. Then type Airflow on the line below.
+4. After this, check the dag is working by typing the following command;
+    - airflow tasks test user_processing create_table
+5. The user_processing and create_table might be different each time for each separate dag.
    
