@@ -1,11 +1,9 @@
-from airflow.sdk import dag, task
+from airflow.decorators import dag, task
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
-from airflow.sdk.bases.sensor import PokeReturnValue
-
+from airflow.sensors.base import PokeReturnValue
 
 @dag
 def user_processing():
-    
     create_table = SQLExecuteQueryOperator(
         task_id="create_table",
         conn_id="postgres",
@@ -18,14 +16,14 @@ def user_processing():
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )
         """
-    
     )
 
     @task.sensor(poke_interval=30, timeout=300)
     def is_api_available() -> PokeReturnValue:
         import requests
-        response = requests.get("https://superheroapi.com/api/id/biography")
+        response = requests.get("https://jsonplaceholder.typicode.com/users/1")
         print(response.status_code)
+        print(response.text)
         if response.status_code == 200:
             condition = True
             char_bio = response.json()
@@ -34,6 +32,20 @@ def user_processing():
             char_bio = None
         return PokeReturnValue(is_done=condition, xcom_value=char_bio)
 
-    is_api_available()
+    @task 
+    def extract_user(char_bio):
+        if char_bio is None:
+            raise ValueError("No data received from API")
+        return {
+            "name": char_bio["name"],
+            "email": char_bio["email"],
+            "city": char_bio["address"]["city"],
+            "phone": char_bio["phone"],
+            "website": char_bio["website"],
+            "company": char_bio["company"]["name"]
+        }
+
+    char_bio = is_api_available()
+    extract_user(char_bio)
 
 user_processing()
