@@ -1,6 +1,5 @@
 from airflow.decorators import dag, task
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
-from airflow.sensors.base import PokeReturnValue
 from datetime import datetime, timedelta
 
 @dag(
@@ -24,19 +23,16 @@ def user_processing():
         """
     )
 
-    @task.sensor(poke_interval=30, timeout=300)
-    def is_api_available() -> PokeReturnValue:
+    @task
+    def is_api_available():
         import requests
         response = requests.get("https://jsonplaceholder.typicode.com/users/1")
         print(response.status_code)
         print(response.text)
         if response.status_code == 200:
-            condition = True
-            char_bio = response.json()
+            return response.json()
         else:
-            condition = False
-            char_bio = None
-        return PokeReturnValue(is_done=condition, xcom_value=char_bio)
+            return None
 
     @task 
     def extract_user(char_bio):
@@ -59,10 +55,9 @@ def user_processing():
             writer.writeheader()
             writer.writerow(user_data)
 
-    # Set up dependencies using TaskFlow API and classic operator style
+    # Set up dependencies using TaskFlow API
     char_bio = is_api_available()
     user_data = extract_user(char_bio)
     process_user(user_data)
-    
 
 user_processing()
