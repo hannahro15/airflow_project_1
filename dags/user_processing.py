@@ -45,7 +45,17 @@ def user_processing():
             "company": char_bio["company"]["name"]
         }
 
+    @task
+    def process_user(user_data):
+        import csv
+
+        with open("/tmp/user_data.csv", "w", newline="") as f:
+            writer = csv.DictWriter(f, fieldnames=user_data.keys())
+            writer.writeheader()
+            writer.writerow(user_data)
+
     char_bio = is_api_available()
-    extract_user(char_bio)
+    user_data = extract_user(char_bio)
+    process_user(user_data)
 
 user_processing()
