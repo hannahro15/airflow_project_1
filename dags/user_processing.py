@@ -1,8 +1,14 @@
 from airflow.decorators import dag, task
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from airflow.sensors.base import PokeReturnValue
+from datetime import datetime, timedelta
 
-@dag
+@dag(
+    schedule='@daily',
+    catchup=False,
+    start_date=datetime(2025, 1, 3),
+    tags=['example', 'user']
+)
 def user_processing():
     create_table = SQLExecuteQueryOperator(
         task_id="create_table",
@@ -48,14 +54,15 @@ def user_processing():
     @task
     def process_user(user_data):
         import csv
-
         with open("/tmp/user_data.csv", "w", newline="") as f:
             writer = csv.DictWriter(f, fieldnames=user_data.keys())
             writer.writeheader()
             writer.writerow(user_data)
 
+    # Set up dependencies using TaskFlow API and classic operator style
     char_bio = is_api_available()
     user_data = extract_user(char_bio)
     process_user(user_data)
+    
 
 user_processing()
