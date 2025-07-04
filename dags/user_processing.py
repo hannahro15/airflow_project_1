@@ -3,6 +3,7 @@ from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from datetime import datetime, timedelta
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 
+
 @dag(
     schedule='@daily',
     catchup=False,
@@ -35,7 +36,7 @@ def user_processing():
         else:
             return None
 
-    @task 
+    @task
     def extract_user(user_data):
         if user_data is None:
             raise ValueError("No data received from API")
@@ -57,7 +58,7 @@ def user_processing():
             writer.writerow(extracted_user)
 
     @task
-    def store_user():
+    def store_user(dummy=None):
         hook = PostgresHook(postgres_conn_id='postgres')
         hook.copy_expert(
             sql="COPY users FROM STDIN WITH CSV HEADER",
@@ -68,5 +69,7 @@ def user_processing():
     extracted_user = extract_user(user_data)
     csv_written = process_user(extracted_user)
     store_user(csv_written)
+    create_table >> user_data
+
 
 user_processing()
