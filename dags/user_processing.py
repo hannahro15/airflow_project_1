@@ -6,7 +6,7 @@ from airflow.providers.postgres.hooks.postgres import PostgresHook
 @dag(
     schedule='@daily',
     catchup=False,
-    start_date=datetime(2025, 1, 3),
+    start_date=datetime(2025, 1, 4),
     tags=['example', 'user']
 )
 def user_processing():
@@ -57,7 +57,7 @@ def user_processing():
             writer.writerow(extracted_user)
 
     @task
-    def store_user(dummy=None):
+    def store_user():
         hook = PostgresHook(postgres_conn_id='postgres')
         hook.copy_expert(
             sql="COPY users FROM STDIN WITH CSV HEADER",
