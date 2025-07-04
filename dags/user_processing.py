@@ -1,6 +1,7 @@
 from airflow.decorators import dag, task
 from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from datetime import datetime, timedelta
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 
 @dag(
     schedule='@daily',
@@ -35,29 +36,37 @@ def user_processing():
             return None
 
     @task 
-    def extract_user(char_bio):
-        if char_bio is None:
+    def extract_user(user_data):
+        if user_data is None:
             raise ValueError("No data received from API")
         return {
-            "name": char_bio["name"],
-            "email": char_bio["email"],
-            "city": char_bio["address"]["city"],
-            "phone": char_bio["phone"],
-            "website": char_bio["website"],
-            "company": char_bio["company"]["name"]
+            "name": user_data["name"],
+            "email": user_data["email"],
+            "city": user_data["address"]["city"],
+            "phone": user_data["phone"],
+            "website": user_data["website"],
+            "company": user_data["company"]["name"]
         }
 
     @task
-    def process_user(user_data):
+    def process_user(extracted_user):
         import csv
         with open("/tmp/user_data.csv", "w", newline="") as f:
-            writer = csv.DictWriter(f, fieldnames=user_data.keys())
+            writer = csv.DictWriter(f, fieldnames=extracted_user.keys())
             writer.writeheader()
-            writer.writerow(user_data)
+            writer.writerow(extracted_user)
 
-    # Set up dependencies using TaskFlow API
-    char_bio = is_api_available()
-    user_data = extract_user(char_bio)
-    process_user(user_data)
+    @task
+    def store_user(dummy=None):
+        hook = PostgresHook(postgres_conn_id='postgres')
+        hook.copy_expert(
+            sql="COPY users FROM STDIN WITH CSV HEADER",
+            filename="/tmp/user_data.csv"
+        )
+
+    user_data = is_api_available()
+    extracted_user = extract_user(user_data)
+    csv_written = process_user(extracted_user)
+    store_user(csv_written)
 
 user_processing()
