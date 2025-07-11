@@ -58,17 +58,21 @@ def user_processing():
             writer.writerow(extracted_poke)
 
     @task
-    def store_user(dummy=None):
+    def store_user():
         hook = PostgresHook(postgres_conn_id='postgres')
         hook.copy_expert(
-            sql="COPY users FROM STDIN WITH CSV HEADER",
+            sql="COPY users (id, name, height, weight, base_experience, type) FROM STDIN WITH CSV HEADER",
             filename="/tmp/poke_data.csv"
         )
 
+    # Execute tasks and define dependencies
     poke_data = is_api_available()
-    extracted_poke = extract_user(poke_data)
-    csv_written = process_user(extracted_poke)
-    store_user(csv_written)
-    create_table >> poke_data
+    extracted = extract_user(poke_data)
+    processed = process_user(extracted)
+    stored = store_user()
 
+    # Define execution order
+    create_table >> poke_data
+    processed >> stored
+    
 user_processing()
