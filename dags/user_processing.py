@@ -3,12 +3,14 @@ from airflow.providers.common.sql.operators.sql import SQLExecuteQueryOperator
 from datetime import datetime
 from airflow.providers.postgres.hooks.postgres import PostgresHook
 
+
 @dag(
     schedule='@daily',
     catchup=False,
     start_date=datetime(2025, 1, 4),
     tags=['example', 'user']
 )
+# This DAG processes user data from a Pokémon API, storing it in a PostgreSQL database.
 def user_processing():
     create_table = SQLExecuteQueryOperator(
         task_id="create_table",
@@ -24,7 +26,8 @@ def user_processing():
         );
         """
     )
-
+    
+    # Retrieve data from the API
     @task
     def is_api_available():
         import requests
@@ -35,7 +38,8 @@ def user_processing():
             return response.json()
         else:
             return None
-
+        
+    # Extract user data from the API response
     @task 
     def extract_user(poke_data):
         if poke_data is None:
@@ -49,6 +53,7 @@ def user_processing():
             "type": poke_data["types"][0]["type"]["name"]
         }
 
+    # Process the extracted user data and write it to a CSV file
     @task
     def process_user(extracted_poke):
         import csv
@@ -57,6 +62,7 @@ def user_processing():
             writer.writeheader()
             writer.writerow(extracted_poke)
 
+    # Store the processed user data in the PostgreSQL database
     @task
     def store_user():
         hook = PostgresHook(postgres_conn_id='postgres')
