@@ -1,5 +1,16 @@
 # Airflow Project 1
 
+This project is about using AirFlow and Docker to create an ETL pipeline. I used the Pokemon API to retrieve Pikachu from it as part of the ETL process.
+
+## Agile
+
+I used GitHub project board to create the various tasks, and also the user stories for each of those tasks.
+
+## Technologies Used
+- Airflow
+- Docker
+- Python
+
 ## Initial setup connecting to Airflow/Docker
 
 1. After adding the docker-compose.yaml file, set up the Python virtual environment. Use the following command:
@@ -39,4 +50,22 @@ To test each dag is working, run the following in Docker:
 4. After this, check the dag is working by typing the following command;
     - airflow tasks test user_processing create_table
 5. The user_processing and create_table might be different each time for each separate dag.
+
+## Architecture and diagram to show the ETL Pipeline
+
+![ETL Pipeline](documentation/etl_pipeline.png)
+
+## Contribution guidelines for future developers
+
+No contributions necessary or required for this project.
+
+## Credits
+
+- [Airflow](https://airflow.apache.org/) 
+- [Docker](https://www.docker.com/)
+- [Pokemon API](https://pokeapi.co/)
+
+Also, a thank you to an excellent Udemy tutorial on Airflow to assist me with this project.
+
+
    
