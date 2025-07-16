@@ -71,14 +71,13 @@ def user_processing():
             filename="/tmp/poke_data.csv"
         )
 
-    # Execute tasks and define dependencies
-    poke_data = is_api_available()
-    extracted = extract_user(poke_data)
+    # Define the ETL pipeline steps
+    api_available = is_api_available()
+    extracted = extract_user(api_available)
     processed = process_user(extracted)
     stored = store_user()
 
-    # Define execution order
-    create_table >> poke_data
-    processed >> stored
+    # Set the dependency chain
+    create_table >> api_available >> extracted >> processed >> stored
     
 user_processing()
