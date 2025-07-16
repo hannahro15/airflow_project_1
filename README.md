@@ -4,7 +4,39 @@ This project is about using AirFlow and Docker to create an ETL pipeline. I used
 
 ## Agile
 
-I used GitHub project board to create the various tasks, and also the user stories for each of those tasks.
+I used GitHub project board to create the various tasks, and also the user stories for each of those tasks. I moved the tasks between various columns as part of the Kanban board in Github projects so that I can keep track of which tasks have been done at what point and what is still to be completed. It also helps with keeping the project generally well organised. 
+
+## User Stories
+
+- As a developer I want to do the initial setup and config/yaml of the project to connect to Airflow and Docker so that I am able to start the project.
+
+- As a developer, I should create a basic dag function to begin with so I am then add in what I need within that such as create table.
+
+- As a developer I want to create a table in SQL within my first DAG function so I have a table created and data can be extracted.
+
+- As a developer I want to be able to connect to Postgres database and add the connection to the Airflow UI so my data is connected.
+
+- As a developer I want to retrieve the api so I can extract the relevant data that I need.
+
+- As a developer I want to create the extrract_user function so that I can retrieve the relevant data for my workflow.
+
+- As a developer I want to create the process_users function so I can convert the data to csv.
+
+- As a developer I want to store_users so the relevant data can stored in the Postgres database.
+
+- As a developer I should define the dependencies to determined order of dags so airflow knows the order to execute them.
+
+- As a developer, I should write clear comments above code to explain what it is doing so it is easy for other people reading your code to understand.
+
+- As a user, I expect to see comments above code so that I can easily understand what is going on in the code.
+
+- As a user I want to be able to see the documentation on the readme for the project so I can see the relevant information for the project.
+
+- As a developer, I should provide easy documentation on the project, so that others can understand it easily and see clear documentation.
+
+## Architecture and diagram to show the ETL Pipeline
+
+![ETL Pipeline](documentation/etl_pipeline.png)
 
 ## Technologies Used
 - Airflow
@@ -50,10 +82,6 @@ To test each dag is working, run the following in Docker:
 4. After this, check the dag is working by typing the following command;
     - airflow tasks test user_processing create_table
 5. The user_processing and create_table might be different each time for each separate dag.
-
-## Architecture and diagram to show the ETL Pipeline
-
-![ETL Pipeline](documentation/etl_pipeline.png)
 
 ## Contribution guidelines for future developers
 
