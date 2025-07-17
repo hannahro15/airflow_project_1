@@ -85,7 +85,12 @@ To test each dag is working, run the following in Docker:
 
 ## Contribution guidelines for future developers
 
-No contributions necessary or required for this project.
+1. Fork the repo 
+2. Click on the green code button and type in git, git clone https://github.com/hannahro15/airflow_project_1.git
+3. Then in the terminal type in, git remote add upstream https://github.com/hannahro15/airflow_project_1.git
+4. Then type the following commands in order: 'git checkout main',  then 'git pull upstream main' on separate lines.
+5. Then type in git checkout your-branchto create a new branch.
+6. Then you should be able to add and commit changes as usual to the repository, and then make pull requests to push up the latest changes.
 
 ## Credits
 

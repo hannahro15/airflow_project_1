@@ -26,6 +26,7 @@ def user_processing():
         );
         """
     )
+
     
     # Retrieve data from the API
     @task
